@@ -20,6 +20,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class UserResponse {
 
+    private String id;
+
     private String email;
 
     private String firstName;
