@@ -1,17 +1,20 @@
 package com.trading.userservice.service;
 
 import com.trading.userservice.dto.AuthResponse;
+import com.trading.userservice.dto.GeneratedRefreshToken;
 import com.trading.userservice.dto.RegisterRequest;
 import com.trading.userservice.dto.UserResponse;
 import com.trading.userservice.entity.User;
 import com.trading.userservice.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,6 +27,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final AuthService authService;
     private final JwtService jwtService;
+    private final RefreshTokenService refreshTokenService;
     private final KafkaTemplate<String, Object> kafkaTemplate;
     private static final String USER_REGISTERED_TOPIC = "user.registered";
 
@@ -54,9 +58,22 @@ public class UserService {
             if (ex != null) log.error("Failed to publish user.registered for {}", savedUser.getId(), ex);
         });
         String accessToken = jwtService.generateAccessToken(savedUser.getId(), savedUser.getEmail());
-        String refreshToken = jwtService.generateRefreshToken(savedUser.getId());
+        GeneratedRefreshToken generated =
+                jwtService.generateRefreshToken(savedUser.getId());
 
-        return authService.buildAuthResponse(savedUser, accessToken, refreshToken);
+        Instant expiresAt = jwtService.getRefreshTokenExpiry();
+
+        refreshTokenService.save(
+                savedUser.getId(),
+                generated.jti(),
+                expiresAt
+        );
+
+        return authService.buildAuthResponse(
+                savedUser,
+                accessToken,
+                generated.token()
+        );
     }
 
 

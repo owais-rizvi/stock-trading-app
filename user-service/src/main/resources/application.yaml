@@ -29,15 +29,17 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JacksonJsonSerializer
 
+
 server:
   port: 8081
 
-jwt:
-  secret: "change-me-to-a-long-random-secret-at-least-32-chars-long"
-  access-token-ttl-seconds: 900
-  refresh-token-ttl-seconds: 604800
 
 logging:
   level:
     com.trading.userservice: DEBUG
     org.hibernate.SQL: DEBUG
+
+jwt:
+  secret: ${JWT_SECRET}
+  accessExp: 900000
+  refreshExp: 604800000

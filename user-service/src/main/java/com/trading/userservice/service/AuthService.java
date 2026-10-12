@@ -1,6 +1,6 @@
 package com.trading.userservice.service;
-
 import com.trading.userservice.dto.AuthResponse;
+import com.trading.userservice.dto.GeneratedRefreshToken;
 import com.trading.userservice.dto.LoginRequest;
 import com.trading.userservice.entity.User;
 import com.trading.userservice.repository.UserRepository;
@@ -9,6 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+
 @Service
 @Slf4j
 @AllArgsConstructor
@@ -16,6 +18,7 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final RefreshTokenService refreshTokenService;
 
     public AuthResponse buildAuthResponse(User user, String accessToken, String refreshToken) {
         return AuthResponse.builder()
@@ -41,8 +44,21 @@ public class AuthService {
         }
         log.info("Login successful: {}", user.getId());
         String accessToken = jwtService.generateAccessToken(user.getId(), user.getEmail());
-        String refreshToken = jwtService.generateRefreshToken(user.getId());
-        return buildAuthResponse(user, accessToken, refreshToken);
-    }
+        GeneratedRefreshToken generated =
+                jwtService.generateRefreshToken(user.getId());
 
+        Instant expiresAt = jwtService.getRefreshTokenExpiry();
+
+        refreshTokenService.save(
+                user.getId(),
+                generated.jti(),
+                expiresAt
+        );
+
+        return buildAuthResponse(
+                user,
+                accessToken,
+                generated.token()
+        );
+    }
 }

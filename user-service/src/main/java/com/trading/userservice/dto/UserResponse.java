@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Data
@@ -32,5 +33,5 @@ public class UserResponse {
 
     private UserStatus status;
 
-    private LocalDateTime createdAt;
+    private Instant createdAt;
 }
