@@ -1,17 +1,12 @@
 package com.trading.userservice.dto;
 
-import com.trading.userservice.entity.UserStatus;
-import jakarta.persistence.Column;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -22,8 +17,6 @@ public class AuthResponse {
 
     private String email;
 
-    private String password;
-
     private String firstName;
 
     private String lastName;
@@ -32,8 +25,7 @@ public class AuthResponse {
 
     private String accessToken;
 
+    @JsonIgnore
     private String refreshToken;
-
-    private String tokenType = "Bearer";
 
 }

@@ -7,14 +7,18 @@ import com.trading.userservice.dto.UserResponse;
 import com.trading.userservice.service.AuthService;
 import com.trading.userservice.service.UserService;
 import com.trading.userservice.service.WalletService;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.time.Duration;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -30,8 +34,22 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.register(req));
     }
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest req) {
-        return ResponseEntity.ok(authService.login(req));
+    public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest req, HttpServletResponse res) {
+        AuthResponse authResponse = authService.login(req);
+
+        ResponseCookie cookie = ResponseCookie.from(
+                        "refreshToken",
+                        authResponse.getRefreshToken())
+                .httpOnly(true)
+                .secure(false) // true in production with HTTPS
+                .sameSite("Lax")
+                .path("/api/auth/")
+                .maxAge(Duration.ofDays(7))
+                .build();
+
+        res.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+
+        return ResponseEntity.ok(authResponse);
     }
 
     @GetMapping("/me")
