@@ -11,44 +11,44 @@ spring:
     driver-class-name: org.postgresql.Driver
 
 
-    jpa:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
       hibernate:
-        ddl-auto: update
-      show-sql: true
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: portfolio-service-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JacksonJsonDeserializer
       properties:
-        hibernate:
-          format_sql: true
-          dialect: org.hibernate.dialect.PostgreSQLDialect
+        spring:
+          json:
+            trusted:
+              packages: "*"
+            use:
+              type:
+                headers: false
+            value:
+              default:
+                type: java.util.HashMap
 
-    kafka:
-      bootstrap-servers: localhost:9092
-      consumer:
-        group-id: portfolio-service-group
-        auto-offset-reset: earliest
-        key-serializer: org.apache.kafka.common.serialization.StringSerializer
-        value-serializer: org.springframework.kafka.support.serializer.JacksonJsonSerializer
-        properties:
-          spring:
-            json:
-              trusted:
-                packages: "*"
-              use:
-                type:
-                  headers: false
-              value:
-                default:
-                  type: java.util.HashMap
+server:
+  port: 8084
 
-  server:
-    port: 8084
+market:
+  service:
+    url: http://localhost:8082
 
-  market:
-    service:
-      url: http://localhost:8082
-
-  management:
-    endpoints:
-      web:
-        exposure:
-          include: health, info
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info
 

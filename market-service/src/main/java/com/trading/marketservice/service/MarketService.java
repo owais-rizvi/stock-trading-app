@@ -6,6 +6,8 @@ import com.trading.marketservice.repository.StockRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.annotation.Order;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -24,7 +26,8 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class MarketService {
+@Order(2)
+public class MarketService implements CommandLineRunner {
 
     private final StockRepository stockRepository;
     private final Random random = new Random();
@@ -36,8 +39,8 @@ public class MarketService {
     private static final String PRICE_KEY_PREFIX = "stock:price:";
     private static final String PRICE_UPDATED_TOPIC = "stock.price.updated";
 
-    @PostConstruct
-    public void initializePrices() {
+    @Override
+    public void run(String...args) {
         log.info("Loading stock data....");
         List<Stock> stocks = stockRepository.findByActiveTrue();
         if (stocks.isEmpty()) {

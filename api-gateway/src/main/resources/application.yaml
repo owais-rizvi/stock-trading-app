@@ -1,0 +1,56 @@
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      routes:
+        - id: user-service-public
+          uri: http://localhost:8081
+          predicates:
+            - Path=/api/v1/users/register, /api/v1/users/login
+
+        - id: user-service
+          uri: http://localhost:8081
+          predicates:
+            - Path/api/v1/users/**
+          filters:
+            - name: JwtAuthFilter
+
+        - id: market-service
+          uri: http://localhost:8082
+          predicates:
+            - Path/api/v1/market/**
+          filters:
+            - name: JwtAuthFilter
+
+        - id: market-websocket
+          uri: ws://localhost:8082
+          predicates:
+            - Path/ws/**
+
+        - id: order-service
+          uri: http://localhost:8083
+          predicates:
+            - Path/api/v1/orders/**
+          filters:
+            - name: JwtAuthFilter
+
+        - id: portfolio-service
+          uri: http://localhost:8084
+          predicates:
+            - Path/api/v1/portfolio/**
+          filters:
+            - name: JwtAuthFilter
+
+
+server:
+  port: 8080
+
+jwt:
+  secret: 2JKNSD4253QW6UNA42853WFA5638Q35A
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info

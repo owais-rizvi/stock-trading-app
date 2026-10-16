@@ -1,20 +1,19 @@
 services:
   postgres:
     image: postgres:16
-    container_name: user-postgres
+    container_name: sta_postgres
     environment:
-      POSTGRES_DB: ${DATABASE_NAME}
       POSTGRES_USER: ${DATABASE_USER}
       POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
     ports:
       - "5432:5432"
     volumes:
-      - user_pgdata:/var/lib/postgresql/data
+      - stocktrading_pgdata:/var/lib/postgresql/data
     networks:
       - trading-network
   redis:
     image: redis:latest
-    container_name: user-redis
+    container_name: sta_redis
     ports:
       - "6379:6379"
     volumes:
@@ -24,7 +23,7 @@ services:
 
   kafka:
     image: confluentinc/cp-kafka:7.4.0
-    container_name: user-kafka
+    container_name: sta_kafka
     ports:
       - "9092:9092"
     environment:
@@ -53,7 +52,7 @@ services:
       - trading-network
 
 volumes:
-  user_pgdata:
+  stocktrading_pgdata:
   redis_data:
 
 networks:

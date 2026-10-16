@@ -10,35 +10,35 @@ spring:
     password: ${DATABASE_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
-    jpa:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
       hibernate:
-        ddl-auto: update
-      show-sql: true
-      properties:
-        hibernate:
-          format_sql: true
-          dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
 
-    kafka:
-      bootstrap-servers: localhost:9092
-      producer:
-        key-serializer: org.apache.kafka.common.serialization.StringSerializer
-        value-serializer: org.springframework.kafka.support.serializer.JacksonJsonSerializer
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JacksonJsonSerializer
 
-    data:
-      redis:
-        host: localhost
-        port: 6379
+  data:
+    redis:
+      host: localhost
+      port: 6379
 
-  server:
-    port: 8082
+server:
+  port: 8082
 
-  market:
-    price-update.interval: 2000
+market:
+  price-update-interval: 2000
 
-  management:
-    endpoints:
-      web:
-        exposure:
-          include: health, info
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info
 
