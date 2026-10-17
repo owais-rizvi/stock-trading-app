@@ -1,4 +1,6 @@
 spring:
+  config:
+    import: "optional:file:.env[.properties]"
   application:
     name: api-gateway
   cloud:
@@ -52,7 +54,7 @@ server:
   port: 8080
 
 jwt:
-  secret: 2JKNSD4253QW6UNA42853WFA5638Q35A2JKNSD4253QW6UNA42853WFA5638Q35A
+  secret: ${JWT_SECRET}
 
 management:
   endpoint:
