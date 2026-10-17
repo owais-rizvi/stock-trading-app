@@ -6,6 +6,8 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJacksonJsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+import tools.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
+import tools.jackson.databind.jsontype.PolymorphicTypeValidator;
 
 @Configuration
 public class RedisConfig {
@@ -16,8 +18,15 @@ public class RedisConfig {
 
         RedisTemplate<String, Object> template = new RedisTemplate<>();
 
+        PolymorphicTypeValidator ptv = BasicPolymorphicTypeValidator.builder()
+                .allowIfSubType("com.trading.marketservice") // Allow your DTO package
+                .allowIfSubType("java.util")                 // Allow standard collections (List, Map, etc.)
+                .allowIfSubType("java.time")                 // Allow time types if your DTOs use them
+                .allowIfSubType("java.math")
+                .build();
+
         GenericJacksonJsonRedisSerializer serializer =
-                GenericJacksonJsonRedisSerializer.builder().build();
+                GenericJacksonJsonRedisSerializer.builder().enableDefaultTyping(ptv).build();
 
         template.setConnectionFactory(redisConnectionFactory);
         template.setKeySerializer(new StringRedisSerializer());

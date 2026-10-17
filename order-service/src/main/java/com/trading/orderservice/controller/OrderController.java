@@ -18,11 +18,14 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OrderController {
     private final OrderService orderService;
+
+    @PostMapping
     public ResponseEntity<Order> placeOrder(@RequestHeader("X-User-Id") String userId, @Valid @RequestBody OrderRequest request) {
         request.setUserId(userId);
         return ResponseEntity.status(HttpStatus.CREATED).body(orderService.placeOrder(request));
     }
 
+    @GetMapping("/{orderId}")
     public ResponseEntity<Order> getOrder(@PathVariable String orderId, @RequestHeader("X-User-Id") String userId) {
         Order order = orderService.getOrder(orderId);
         if (order.getUserId().equals(userId)) {
@@ -31,6 +34,7 @@ public class OrderController {
         return ResponseEntity.ok(order);
     }
 
+    @GetMapping("/my-orders")
     public ResponseEntity<List<Order>> getMyOrder(@RequestHeader("X-User-Id") String userId) {
         return ResponseEntity.ok(orderService.getUserOrders(userId));
     }

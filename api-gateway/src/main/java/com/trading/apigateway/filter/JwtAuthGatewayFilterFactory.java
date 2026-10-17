@@ -18,12 +18,12 @@ import java.security.Key;
 
 @Component
 @Slf4j
-public class JwtAuthFilter extends AbstractGatewayFilterFactory<JwtAuthFilter.Config> {
+public class JwtAuthGatewayFilterFactory extends AbstractGatewayFilterFactory<JwtAuthGatewayFilterFactory.Config> {
 
     @Value("${jwt.secret}")
     private String secret;
 
-    public JwtAuthFilter() {
+    public JwtAuthGatewayFilterFactory() {
         super(Config.class);
     }
     @Override
@@ -36,7 +36,7 @@ public class JwtAuthFilter extends AbstractGatewayFilterFactory<JwtAuthFilter.Co
             if(isPublicEndpoint(path)) {
                     log.debug("Public endpoint - skip JWT");
             }
-            if (request.getHeaders().containsHeader("Authorization")) {
+            if (!request.getHeaders().containsHeader("Authorization")) {
                 log.warn("Missing authorization header: {}", path);
                 return unauthorizedResponse(exchange, "Authorization header missing");
             }

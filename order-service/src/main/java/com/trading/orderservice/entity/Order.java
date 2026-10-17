@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 public class Order {
 
     @Id
-    @Column(nullable = false)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
     @Column(nullable = false)
