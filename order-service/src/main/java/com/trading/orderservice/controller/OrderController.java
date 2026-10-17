@@ -28,7 +28,7 @@ public class OrderController {
     @GetMapping("/{orderId}")
     public ResponseEntity<Order> getOrder(@PathVariable String orderId, @RequestHeader("X-User-Id") String userId) {
         Order order = orderService.getOrder(orderId);
-        if (order.getUserId().equals(userId)) {
+        if (!order.getUserId().equals(userId)) {
             return ResponseEntity.status(403).build();
         }
         return ResponseEntity.ok(order);
