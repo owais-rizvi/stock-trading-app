@@ -62,18 +62,18 @@ public class UserController {
         return ResponseEntity.ok(userService.getUserById(userId));
     }
 
-    @PostMapping("/{userId}/funds/add")
-    public ResponseEntity<UserResponse> addFunds(@PathVariable String userId, @RequestParam BigDecimal amount) {
+    @PostMapping("/funds/add")
+    public ResponseEntity<UserResponse> addFunds(@RequestHeader("X-User-Id") String userId, @RequestParam BigDecimal amount) {
         return ResponseEntity.ok(walletService.addFunds(userId, amount));
     }
 
-    @PostMapping("/{userId}/funds/deduct")
-    public ResponseEntity<UserResponse> deductFunds(@PathVariable String userId, @RequestParam BigDecimal amount) {
+    @PostMapping("/funds/deduct")
+    public ResponseEntity<UserResponse> deductFunds(@RequestHeader("X-User-Id") String userId, @RequestParam BigDecimal amount) {
         return ResponseEntity.ok(walletService.deductFunds(userId, amount));
     }
 
-    @PostMapping("/{userId}/funds/credit")
-    public ResponseEntity<UserResponse> creditFunds(@PathVariable String userId, @RequestParam BigDecimal amount) {
+    @PostMapping("/funds/credit")
+    public ResponseEntity<UserResponse> creditFunds(@RequestHeader("X-User-Id") String userId, @RequestParam BigDecimal amount) {
         return ResponseEntity.ok(walletService.creditFunds(userId, amount));
     }
 }

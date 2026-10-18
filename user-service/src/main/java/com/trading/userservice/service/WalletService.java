@@ -18,6 +18,9 @@ public class WalletService {
     private final UserService userService;
 
     public UserResponse addFunds(String userId, BigDecimal amount) {
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new RuntimeException("Amount must be greater than zero");
+        }
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found: " + userId));
         user.setWalletBalance(user.getWalletBalance().add(amount));
         User savedUser = userRepository.save(user);
@@ -27,6 +30,9 @@ public class WalletService {
     }
 
     public UserResponse deductFunds(String userId, BigDecimal amount) {
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new RuntimeException("Amount must be greater than zero");
+        }
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found: " + userId));
         if (user.getWalletBalance().compareTo(amount) < 0) {
             throw new RuntimeException("Insufficient wallet balance: " + user.getWalletBalance());
@@ -39,6 +45,9 @@ public class WalletService {
     }
 
     public UserResponse creditFunds(String userId, BigDecimal amount) {
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new RuntimeException("Amount must be greater than zero");
+        }
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found: " + userId));
         user.setWalletBalance(user.getWalletBalance().add(amount));
         User savedUser = userRepository.save(user);
