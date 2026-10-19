@@ -3,6 +3,7 @@ package com.trading.userservice.service;
 import com.trading.userservice.dto.UserResponse;
 import com.trading.userservice.entity.User;
 import com.trading.userservice.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -17,11 +18,12 @@ public class WalletService {
     private final UserRepository userRepository;
     private final UserService userService;
 
+    @Transactional
     public UserResponse addFunds(String userId, BigDecimal amount) {
         if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new RuntimeException("Amount must be greater than zero");
         }
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found: " + userId));
+        User user = userRepository.findWithLockById(userId).orElseThrow(() -> new RuntimeException("User not found: " + userId));
         user.setWalletBalance(user.getWalletBalance().add(amount));
         User savedUser = userRepository.save(user);
 
@@ -29,11 +31,12 @@ public class WalletService {
         return userService.mapToResponse(savedUser);
     }
 
+    @Transactional
     public UserResponse deductFunds(String userId, BigDecimal amount) {
         if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new RuntimeException("Amount must be greater than zero");
         }
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found: " + userId));
+        User user = userRepository.findWithLockById(userId).orElseThrow(() -> new RuntimeException("User not found: " + userId));
         if (user.getWalletBalance().compareTo(amount) < 0) {
             throw new RuntimeException("Insufficient wallet balance: " + user.getWalletBalance());
         }
@@ -44,11 +47,12 @@ public class WalletService {
         return userService.mapToResponse(savedUser);
     }
 
+    @Transactional
     public UserResponse creditFunds(String userId, BigDecimal amount) {
         if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new RuntimeException("Amount must be greater than zero");
         }
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found: " + userId));
+        User user = userRepository.findWithLockById(userId).orElseThrow(() -> new RuntimeException("User not found: " + userId));
         user.setWalletBalance(user.getWalletBalance().add(amount));
         User savedUser = userRepository.save(user);
 
