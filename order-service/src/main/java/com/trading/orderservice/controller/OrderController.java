@@ -20,9 +20,9 @@ public class OrderController {
     private final OrderService orderService;
 
     @PostMapping
-    public ResponseEntity<Order> placeOrder(@RequestHeader("X-User-Id") String userId, @Valid @RequestBody OrderRequest request) {
+    public ResponseEntity<Order> placeOrder(@RequestHeader("X-User-Id") String userId, @RequestHeader("Idempotency-Key") String idempotencyKey, @Valid @RequestBody OrderRequest request) {
         request.setUserId(userId);
-        return ResponseEntity.status(HttpStatus.CREATED).body(orderService.placeOrder(request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(orderService.placeOrder(request, idempotencyKey));
     }
 
     @GetMapping("/{orderId}")

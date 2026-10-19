@@ -63,18 +63,23 @@ public class UserController {
     }
 
     @PostMapping("/funds/add")
-    public ResponseEntity<UserResponse> addFunds(@RequestHeader("X-User-Id") String userId, @RequestParam BigDecimal amount) {
-        return ResponseEntity.ok(walletService.addFunds(userId, amount));
+    public ResponseEntity<UserResponse> addFunds(@RequestHeader("X-User-Id") String userId, @RequestParam BigDecimal amount, @RequestHeader("Idempotency-Key") String reference) {
+        return ResponseEntity.ok(walletService.addFunds(userId, reference, amount));
     }
 
     @PostMapping("/funds/deduct")
-    public ResponseEntity<UserResponse> deductFunds(@RequestHeader("X-User-Id") String userId, @RequestParam BigDecimal amount) {
-        return ResponseEntity.ok(walletService.deductFunds(userId, amount));
+    public ResponseEntity<UserResponse> deductFunds(@RequestHeader("X-User-Id") String userId, @RequestParam BigDecimal amount, @RequestParam String reference) {
+        return ResponseEntity.ok(walletService.deductFunds(userId, reference, amount));
     }
 
     @PostMapping("/funds/credit")
-    public ResponseEntity<UserResponse> creditFunds(@RequestHeader("X-User-Id") String userId, @RequestParam BigDecimal amount) {
-        return ResponseEntity.ok(walletService.creditFunds(userId, amount));
+    public ResponseEntity<UserResponse> creditFunds(@RequestHeader("X-User-Id") String userId, @RequestParam BigDecimal amount, @RequestParam String reference) {
+        return ResponseEntity.ok(walletService.creditFunds(userId, reference, amount));
+    }
+
+    @PostMapping("/funds/reverse")
+    public ResponseEntity<UserResponse> reverse(@RequestHeader("X-User-Id") String userId, @RequestParam String reference) {
+        return ResponseEntity.ok(walletService.reverse(userId, reference));
     }
 }
 

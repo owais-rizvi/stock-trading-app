@@ -10,11 +10,14 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "orders")
+@Table(name = "orders",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"userId", "idempotencyKey"}))
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Order {
+
+    private String idempotencyKey;
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
